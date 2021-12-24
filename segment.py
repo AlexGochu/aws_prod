@@ -1,7 +1,7 @@
 
 
 from tensorflow.keras.models import load_model
-MODEL_NAME =   'modelAir.h5'
+MODEL_NAME =   './modelAir.h5'
 import numpy as np
 from PIL import Image 
 model = load_model(MODEL_NAME)                                              # Загрузка весов модели
