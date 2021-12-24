@@ -1,22 +1,31 @@
 
 
 from tensorflow.keras.models import load_model
-MODEL_NAME =   './modelAir.h5'
+MODEL_NAME =   'model_fmr_all.h5'
 import numpy as np
 from PIL import Image 
 model = load_model(MODEL_NAME)                                              # Загрузка весов модели
-INPUT_SHAPE = (256, 456, 3)
 
 
 def process(image_file):
-    image = Image.open(image_file)  # Открытие обрабатываемого файла
-    resized_image = image.resize((INPUT_SHAPE[1], INPUT_SHAPE[0]))          # Изменение размера изображения в соответствии со входом сети
-    array = np.array(resized_image)[..., :3][np.newaxis, ..., np.newaxis]   # Регулировка формы тензора для подачи в сеть
-    prediction_array = (255 * model.predict(array)).astype(int)             # Запуск предсказания сети
-    prediction_array = np.split(prediction_array, 2, axis = -1)[0]          # Нулевой канал предсказания (значения 0 - самолет, 1 - фон)
-    zeros = np.zeros_like(prediction_array)                                 # Создание массива нулей
-    ones = np.ones_like(prediction_array)                                   # Создание массива единиц
-    prediction_array_4d = np.concatenate([255 * (prediction_array > 100), zeros, zeros, 128 * ones], axis=3)[0].astype(np.uint8)  # Формирование тензора для наложения найденной маски
-    mask_image = Image.fromarray(prediction_array_4d).resize(image.size)    # Преобразование тензора в изображение и подгонка его размера к исходному
-    image.paste(mask_image, (0, 0), mask_image)                             # Добавление маски на исходное изображение
-    return resized_image, prediction_array, image                           # Возврат исходного уменьшенного изображения, найденной маски и исходного изображения с наложенной маской
+    classes = {0: 'самолет',
+               1: 'автомобиль',
+               2: 'птица',
+               3: 'кот',
+               4: 'олень',
+               5: 'собака',
+               6: 'лягушка',
+               7: 'лошадь',
+               8: 'корабль',
+               9: 'грузовик'}
+    
+
+    img_width, img_height = 32, 32
+
+    img = Image.open(image_file).resize((img_height, img_width))
+    image = np.array(img, dtype='float64') / 255
+
+    image = np.expand_dims(image, axis=0)
+    cls_image = np.argmax(model.predict(image))
+    
+    return classes[cls_image]
