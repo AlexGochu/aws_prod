@@ -14,7 +14,7 @@ if not image_file is None:                                           # Выпо�
     pred_result = process(image_file)                                    # Обработка изображения с помощью функции, реализованной в другом файле
     
     
-    result = '<p style="color: blue; font-size: 42px;">'+pred_result+'</p>'
+    result = '<p style="color: white; font-size: 42px; text-align: center; text-transform: uppercase;">'+pred_result+'</p>'
     st.markdown(result, unsafe_allow_html=True)
     st.image(image)
 
