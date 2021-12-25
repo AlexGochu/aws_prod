@@ -9,7 +9,12 @@ st.title('AWS Cifar10')
 image_file = st.file_uploader('Load an image', type=['png', 'jpg'])  # Добавление загрузчика файлов
 
 if not image_file is None:                                           # Выполнение блока, если загружено изображение
+    col = st.beta_columns(1)
     image = Image.open(image_file)                                   # Открытие изображения
-    result = process(image_file)                                    # Обработка изображения с помощью функции, реализованной в другом файле
-    st.text(result)
+    pred_result = process(image_file)                                    # Обработка изображения с помощью функции, реализованной в другом файле
+    
+    
+    result = '<p style="color: blue; font-size: 42px;">'+pred_result+'</p>'
+    col.text(st.markdown(result, unsafe_allow_html=True))
+    col.image(img)
 
